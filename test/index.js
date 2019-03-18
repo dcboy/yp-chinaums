@@ -14,7 +14,7 @@ describe('订单相关', () => {
 			merOrderId: `3194${moment().format('YYYYMMDDHHmmss')}`,
 		});
 		console.log(res)
-		assert.ok(res.sandbox.indexOf('pay.do'));
+		assert.ok(res.indexOf('pay.do'));
 	});
 
 	it('查询订单', async () => {

@@ -3,9 +3,16 @@ const querystring = require('querystring');
 const axios = require('axios');
 import crypto from 'crypto';
 const APIURL = {
-	commonUrl: 'https://qr-test2.chinaums.com/netpay-route-server/api/',
-	payUrl: 'https://qr-test2.chinaums.com/netpay-portal/webpay/pay.do',
+	commonUrl:
+		Number(process.env.sandbox) === 0
+			? 'https://qr-test2.chinaums.com/netpay-route-server/api/'
+			: 'https://qr.chinaums.com/netpay-route-server/api/',
+	payUrl:
+		Number(process.env.sandbox) === 0
+			? 'https://qr-test2.chinaums.com/netpay-portal/webpay/pay.do'
+			: 'https://qr.chinaums.com/netpay-portal/webpay/pay.do',
 };
+
 /**
  * 银联商户类
  */
@@ -77,8 +84,7 @@ class Chinaums {
 		const signstr = `${this.objKeySort(params)}${this.config.key}`;
 		params.sign = this.md5Sign(signstr);
 		const link = `${APIURL.payUrl}?${querystring.stringify(params)}`;
-		params.sanbox = link;
-		return params;
+		return link;
 	}
 
 	/**
