@@ -2,17 +2,6 @@ const moment = require('moment');
 const querystring = require('querystring');
 const axios = require('axios');
 import crypto from 'crypto';
-const APIURL = {
-	commonUrl:
-		Number(process.env.sandbox) === 0
-			? 'https://qr-test2.chinaums.com/netpay-route-server/api/'
-			: 'https://qr.chinaums.com/netpay-route-server/api/',
-	payUrl:
-		Number(process.env.sandbox) === 0
-			? 'https://qr-test2.chinaums.com/netpay-portal/webpay/pay.do'
-			: 'https://qr.chinaums.com/netpay-portal/webpay/pay.do',
-};
-
 /**
  * 银联商户类
  */
@@ -24,6 +13,14 @@ class Chinaums {
 		this.baseOptions = {
 			requestTimestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
 			mid: this.config.mid, // 商户号
+		};
+		this.APIURL = {
+			commonUrl: this.config.sandbox
+				? 'https://qr-test2.chinaums.com/netpay-route-server/api/'
+				: 'https://qr.chinaums.com/netpay-route-server/api/',
+			payUrl: this.config.sandbox
+				? 'https://qr-test2.chinaums.com/netpay-portal/webpay/pay.do'
+				: 'https://qr.chinaums.com/netpay-portal/webpay/pay.do',
 		};
 	}
 
@@ -83,7 +80,7 @@ class Chinaums {
 		params = Object.assign({}, this.baseOptions, options, params);
 		const signstr = `${this.objKeySort(params)}${this.config.key}`;
 		params.sign = this.md5Sign(signstr);
-		const link = `${APIURL.payUrl}?${querystring.stringify(params)}`;
+		const link = `${this.APIURL.payUrl}?${querystring.stringify(params)}`;
 		return link;
 	}
 
@@ -103,7 +100,7 @@ class Chinaums {
 			params = Object.assign({}, this.baseOptions, options, params);
 			const signstr = `${this.objKeySort(params)}${this.config.key}`;
 			params.sign = this.md5Sign(signstr);
-			this.sendRequest(APIURL.commonUrl, params, resolve, reject);
+			this.sendRequest(this.APIURL.commonUrl, params, resolve, reject);
 		});
 	}
 
@@ -121,7 +118,7 @@ class Chinaums {
 			params = Object.assign({}, this.baseOptions, options, params);
 			const signstr = `${this.objKeySort(params)}${this.config.key}`;
 			params.sign = this.md5Sign(signstr);
-			this.sendRequest(APIURL.commonUrl, params, resolve, reject);
+			this.sendRequest(this.APIURL.commonUrl, params, resolve, reject);
 		});
 	}
 
@@ -139,7 +136,7 @@ class Chinaums {
 			params = Object.assign({}, this.baseOptions, options, params);
 			const signstr = `${this.objKeySort(params)}${this.config.key}`;
 			params.sign = this.md5Sign(signstr);
-			this.sendRequest(APIURL.commonUrl, params, resolve, reject);
+			this.sendRequest(this.APIURL.commonUrl, params, resolve, reject);
 		});
 	}
 }
