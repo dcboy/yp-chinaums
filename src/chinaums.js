@@ -77,7 +77,8 @@ class Chinaums {
 		const signstr = `${this.objKeySort(params)}${this.config.key}`;
 		params.sign = this.md5Sign(signstr);
 		const link = `${APIURL.payUrl}?${querystring.stringify(params)}`;
-		return link;
+		params.sandbox = link;
+		return params;
 	}
 
 	/**
@@ -135,7 +136,6 @@ class Chinaums {
 			this.sendRequest(APIURL.commonUrl, params, resolve, reject);
 		});
 	}
-
 }
 
 // export
