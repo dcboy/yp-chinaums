@@ -23,52 +23,54 @@ class Chinaums {
         ? 'https://qr-test2.chinaums.com/netpay-portal/webpay/pay.do'
         : 'https://qr.chinaums.com/netpay-portal/webpay/pay.do',
     };
-  }
 
-  md5Sign(data) {
-    const md5 = crypto
-      .createHash('md5')
-      .update(data)
-      .digest('hex');
-    return md5;
-  }
+    this.md5Sign = (data) => {
+      const md5 = crypto
+        .createHash('md5')
+        .update(data)
+        .digest('hex');
+      return md5;
+    };
 
-  objKeySort(arys) {
-    // 先用Object内置类的keys方法获取要排序对象的属性名数组，再利用Array的sort方法进行排序
-    const newkey = Object.keys(arys).sort();
-    let newObj = ''; // 创建一个新的对象，用于存放排好序的键值对
-    for (let i = 0; i < newkey.length; i++) {
-      // 遍历newkey数组
-      if (arys[newkey[i]] === '') {
-        continue;
+    this.objKeySort = (arys) => {
+      // 先用Object内置类的keys方法获取要排序对象的属性名数组，再利用Array的sort方法进行排序
+      const newkey = Object.keys(arys).sort();
+      let newObj = ''; // 创建一个新的对象，用于存放排好序的键值对
+      for (let i = 0; i < newkey.length; i += 1) {
+        // 遍历newkey数组
+        if (arys[newkey[i]] !== '') {
+          newObj += `${[newkey[i]]}=${arys[newkey[i]]}&`;
+        }
       }
-      newObj += `${[newkey[i]]}=${arys[newkey[i]]}&`;
-    }
-    return newObj.substring(0, newObj.length - 1);
+      return newObj.substring(0, newObj.length - 1);
+    };
   }
 
   /**
 	 * 发送请求到服务器
-	 * @param {*} params
+	 * @param {Object} params
 	 * @return {*} options
 	 */
-  sendRequest(url, params, resolve, reject) {
+  async sendRequest(url, params) {
+    const result = await axios.post(url, params);
     try {
-      axios
-        .post(url, params)
-        .then(body => resolve(body.data))
-        .catch((error) => {
-          throw new Error(error);
-        });
+      if (result && result.data && this.verifyNotify(result.data)) {
+        return result.data;
+      }
+      return new Error('ERR_SING_INVALID');
     } catch (ex) {
-      return reject(new Error(`请求发生错误:${ex}`));
+      return new Error(`请求发生错误:${ex}`);
     }
   }
 
   /**
 	 * 3.6
 	 * 下单请求
-	 * @param {*} params
+	 * @param {Object} params
+	 * @param {string} params.msgSrc - 消息来源
+	 * @param {string} params.merOrderId - 商户订单号
+	 * @param {string} params.totalAmount - 总价格
+	 * @param {string} params.tid - 终端号
 	 * @return Url
 	 */
   createOrderUrl(params) {
@@ -87,56 +89,61 @@ class Chinaums {
 	 * 4.0
 	 * 支付结果查询
 	 * @param {*} params 配置信息
-	 * @return Promise<object> 查询的用户数据
+	 * @param {string} params.msgSrc - 消息来源
+	 * @param {string} params.merOrderId - 商户订单号
+	 * @param {string} params.tid - 终端号
+	 * @return {Promise<object>} 查询的用户数据
 	 */
-  queryOrder(params) {
-    return new Promise((resolve, reject) => {
-      // 本接口的固定参数
-      const options = {
-        msgType: 'query',
-        instMid: 'YUEDANDEFAULT', // 业务类型
-      };
-      params = Object.assign({}, this.baseOptions, options, params);
-      const signstr = `${this.objKeySort(params)}${this.config.key}`;
-      params.sign = this.md5Sign(signstr);
-      this.sendRequest(this.APIURL.commonUrl, params, resolve, reject);
-    });
+  async queryOrder(params) {
+    const options = {
+      msgType: 'query',
+      instMid: 'YUEDANDEFAULT', // 业务类型
+    };
+    params = Object.assign({}, this.baseOptions, options, params);
+    const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
+    params.sign = Chinaums.md5Sign(signstr);
+    const result = await this.sendRequest(this.APIURL.commonUrl, params);
+    return result;
   }
 
   /**
 	 * 7.3	银联订单退款请求
 	 * @param {*} params
-	 * @return 订单退款回调结果
+	 * @param {string} params.msgSrc - 消息来源
+	 * @param {string} params.merOrderId - 商户订单号
+	 * @param {string} params.tid - 终端号
+	 * @param {string} params.refundAmount - 要退货的金额
+	 * @return {Promise<object>} 订单退款回调结果
 	 */
-  refunds(params) {
-    return new Promise((resolve, reject) => {
-      const options = {
-        msgType: 'refund', // 消息类型
-        instMid: 'YUEDANDEFAULT', // 业务类型
-      };
-      params = Object.assign({}, this.baseOptions, options, params);
-      const signstr = `${this.objKeySort(params)}${this.config.key}`;
-      params.sign = this.md5Sign(signstr);
-      this.sendRequest(this.APIURL.commonUrl, params, resolve, reject);
-    });
+  async refunds(params) {
+    const options = {
+      msgType: 'refund', // 消息类型
+      instMid: 'YUEDANDEFAULT', // 业务类型
+    };
+    params = Object.assign({}, this.baseOptions, options, params);
+    const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
+    params.sign = Chinaums.md5Sign(signstr);
+    const result = await this.sendRequest(this.APIURL.commonUrl, params);
+    return result;
   }
 
   /**
 	 * 9.1	关闭订单请求
 	 * @param {*} params
-	 * @return 结果
+	 * @param {string} params.msgSrc - 消息来源
+	 * @param {string} params.merOrderId - 商户订单号
+	 * @param {string} params.tid - 终端号
 	 */
-  closeOrder(params) {
-    return new Promise((resolve, reject) => {
-      const options = {
-        msgType: 'close', // 消息类型
-        instMid: 'YUEDANDEFAULT', // 业务类型
-      };
-      params = Object.assign({}, this.baseOptions, options, params);
-      const signstr = `${this.objKeySort(params)}${this.config.key}`;
-      params.sign = this.md5Sign(signstr);
-      this.sendRequest(this.APIURL.commonUrl, params, resolve, reject);
-    });
+  async closeOrder(params) {
+    const options = {
+      msgType: 'close', // 消息类型
+      instMid: 'YUEDANDEFAULT', // 业务类型
+    };
+    params = Object.assign({}, this.baseOptions, options, params);
+    const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
+    params.sign = Chinaums.md5Sign(signstr);
+    const result = await this.sendRequest(this.APIURL.commonUrl, params);
+    return result;
   }
 }
 
