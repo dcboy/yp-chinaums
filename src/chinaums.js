@@ -36,12 +36,11 @@ class Chinaums {
       // 先用Object内置类的keys方法获取要排序对象的属性名数组，再利用Array的sort方法进行排序
       const newkey = Object.keys(arys).sort();
       let newObj = ''; // 创建一个新的对象，用于存放排好序的键值对
-      for (let i = 0; i < newkey.length; i += 1) {
-        // 遍历newkey数组
-        if (arys[newkey[i]] !== '') {
+      newkey.forEach((item, i) => {
+        if (arys[newkey[i]] !== '' && [newkey[i]] !== 'sign') {
           newObj += `${[newkey[i]]}=${arys[newkey[i]]}&`;
         }
-      }
+      });
       return newObj.substring(0, newObj.length - 1);
     };
 
@@ -70,7 +69,7 @@ class Chinaums {
       if (result && result.data && this.verifyNotify(result.data)) {
         return result.data;
       }
-      return new Error('ERR_SING_INVALID');
+      return result;
     } catch (ex) {
       return new Error(`请求发生错误:${ex}`);
     }
