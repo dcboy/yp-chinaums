@@ -1,8 +1,8 @@
+import crypto from 'crypto';
+
 const moment = require('moment');
 const querystring = require('querystring');
 const axios = require('axios');
-const crypto = require('crypto');
-
 /**
  * 银联商户类
  */
@@ -23,45 +23,42 @@ class Chinaums {
         ? 'https://qr-test2.chinaums.com/netpay-portal/webpay/pay.do'
         : 'https://qr.chinaums.com/netpay-portal/webpay/pay.do',
     };
-  }
 
-  static md5Sign(data) {
-    const md5 = crypto
-      .createHash('md5')
-      .update(data)
-      .digest('hex');
-    return md5;
-  }
+    this.md5Sign = (data) => {
+      const md5 = crypto
+        .createHash('md5')
+        .update(data)
+        .digest('hex');
+      return md5;
+    };
 
-  static objKeySort(arys) {
-    // 先用Object内置类的keys方法获取要排序对象的属性名数组，再利用Array的sort方法进行排序
-    const newkey = Object.keys(arys).sort();
-    let newObj = ''; // 创建一个新的对象，用于存放排好序的键值对
-    newkey.forEach((item, i) => {
-      // 遍历newkey数组
-      if (arys[newkey[i]] !== '' && [newkey[i]] !== 'sign') {
-        newObj += `${[newkey[i]]}=${arys[newkey[i]]}&`;
+    this.objKeySort = (arys) => {
+      // 先用Object内置类的keys方法获取要排序对象的属性名数组，再利用Array的sort方法进行排序
+      const newkey = Object.keys(arys).sort();
+      let newObj = ''; // 创建一个新的对象，用于存放排好序的键值对
+      for (let i = 0; i < newkey.length; i += 1) {
+        // 遍历newkey数组
+        if (arys[newkey[i]] !== '') {
+          newObj += `${[newkey[i]]}=${arys[newkey[i]]}&`;
+        }
       }
-    });
-    return newObj.substring(0, newObj.length - 1);
-  }
-  /**
-	 * @param {*} parmas
-	 * 验证获取回来的签名
-	 * @teturn boolean
-	 */
-  verifyNotify(parmas) {
-    if (parmas.sign) {
-      const { sign } = parmas;
-      delete parmas.sign;
-      const md5Sign = Chinaums.md5Sign(`${Chinaums.objKeySort(parmas)}${this.config.key}`);
-      if (md5Sign.toLocaleUpperCase() === sign.toLocaleUpperCase()) {
-        return true;
+      return newObj.substring(0, newObj.length - 1);
+    };
+
+    this.verifyNotify = (parmas) => {
+      if (parmas.sign) {
+        const { sign } = parmas;
+        delete parmas.sign;
+        const md5Sign = this.md5Sign(`${this.objKeySort(parmas)}${this.config.key}`);
+        if (md5Sign.toLocaleUpperCase() === sign.toLocaleUpperCase()) {
+          return true;
+        }
+        return false;
       }
       return false;
-    }
-    return false;
+    };
   }
+
   /**
 	 * 发送请求到服务器
 	 * @param {Object} params
@@ -73,7 +70,8 @@ class Chinaums {
       if (result && result.data && this.verifyNotify(result.data)) {
         return result.data;
       }
-      return new Error('ERR_SING_INVALID');
+      // 返回报错信息
+      return result;
     } catch (ex) {
       return new Error(`请求发生错误:${ex}`);
     }
@@ -95,8 +93,8 @@ class Chinaums {
       instMid: 'YUEDANDEFAULT', // 业务类型
     };
     params = Object.assign({}, this.baseOptions, options, params);
-    const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
-    params.sign = Chinaums.md5Sign(signstr);
+    const signstr = `${this.objKeySort(params)}${this.config.key}`;
+    params.sign = this.md5Sign(signstr);
     const link = `${this.APIURL.payUrl}?${querystring.stringify(params)}`;
     return link;
   }
@@ -116,8 +114,8 @@ class Chinaums {
       instMid: 'YUEDANDEFAULT', // 业务类型
     };
     params = Object.assign({}, this.baseOptions, options, params);
-    const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
-    params.sign = Chinaums.md5Sign(signstr);
+    const signstr = `${this.objKeySort(params)}${this.config.key}`;
+    params.sign = this.md5Sign(signstr);
     const result = await this.sendRequest(this.APIURL.commonUrl, params);
     return result;
   }
@@ -137,8 +135,8 @@ class Chinaums {
       instMid: 'YUEDANDEFAULT', // 业务类型
     };
     params = Object.assign({}, this.baseOptions, options, params);
-    const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
-    params.sign = Chinaums.md5Sign(signstr);
+    const signstr = `${this.objKeySort(params)}${this.config.key}`;
+    params.sign = this.md5Sign(signstr);
     const result = await this.sendRequest(this.APIURL.commonUrl, params);
     return result;
   }
@@ -156,8 +154,8 @@ class Chinaums {
       instMid: 'YUEDANDEFAULT', // 业务类型
     };
     params = Object.assign({}, this.baseOptions, options, params);
-    const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
-    params.sign = Chinaums.md5Sign(signstr);
+    const signstr = `${this.objKeySort(params)}${this.config.key}`;
+    params.sign = this.md5Sign(signstr);
     const result = await this.sendRequest(this.APIURL.commonUrl, params);
     return result;
   }
