@@ -49,7 +49,7 @@ class Chinaums {
       if (parmas.sign) {
         const { sign } = parmas;
         delete parmas.sign;
-        const md5Sign = Chinaums.md5Sign(`${Chinaums.objKeySort(parmas)}${this.config.key}`);
+        const md5Sign = this.md5Sign(`${this.objKeySort(parmas)}${this.config.key}`);
         if (md5Sign.toLocaleUpperCase() === sign.toLocaleUpperCase()) {
           return true;
         }
