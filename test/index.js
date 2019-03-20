@@ -3,7 +3,6 @@ const moment = require('moment');
 const Chinaums = require('../src/chinaums');
 const confifg = require('../config/');
 
-
 const chinaums = new Chinaums(confifg);
 const assert = require('assert');
 
@@ -28,7 +27,7 @@ describe('订单相关', () => {
       msgSrc: 'WWW.TEST.COM',
     });
     console.log(res);
-    assert.ok(res);
+    assert.ok(res.errCode === 'SUCCESS');
   });
 
   it.skip('订单退款', async () => {
@@ -39,7 +38,7 @@ describe('订单相关', () => {
       msgSrc: 'WWW.TEST.COM',
     });
     console.log(res);
-    assert.ok(res);
+    assert.ok(res.errCode === 'SUCCESS');
   });
 
   it.skip('关闭订单', async () => {
@@ -49,6 +48,6 @@ describe('订单相关', () => {
       tid: '88880001',
     });
     console.log(res);
-    assert.ok(res);
+    assert.ok(res.errCode === 'SUCCESS');
   });
 });

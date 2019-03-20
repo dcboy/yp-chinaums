@@ -70,7 +70,7 @@ class Chinaums {
       if (result && result.data && this.verifyNotify(result.data)) {
         return result.data;
       }
-      return new Error('ERR_SING_INVALID');
+      return result;
     } catch (ex) {
       return new Error(`请求发生错误:${ex}`);
     }
