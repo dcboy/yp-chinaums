@@ -67,9 +67,13 @@ class Chinaums {
 	 * @param {Object} params
 	 * @return {*} options
 	 */
-  static async sendRequest(url, params) {
+  async sendRequest(url, params) {
+    const result = await axios.post(url, params);
     try {
-      return await axios.post(url, params);
+      if (result && result.data && this.verifyNotify(result.data)) {
+        return result.data;
+      }
+      return new Error('ERR_SING_INVALID');
     } catch (ex) {
       return new Error(`请求发生错误:${ex}`);
     }
@@ -114,7 +118,7 @@ class Chinaums {
     params = Object.assign({}, this.baseOptions, options, params);
     const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
     params.sign = Chinaums.md5Sign(signstr);
-    const result = await Chinaums.sendRequest(this.APIURL.commonUrl, params);
+    const result = await this.sendRequest(this.APIURL.commonUrl, params);
     return result;
   }
 
@@ -135,7 +139,7 @@ class Chinaums {
     params = Object.assign({}, this.baseOptions, options, params);
     const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
     params.sign = Chinaums.md5Sign(signstr);
-    const result = await Chinaums.sendRequest(this.APIURL.commonUrl, params);
+    const result = await this.sendRequest(this.APIURL.commonUrl, params);
     return result;
   }
 
@@ -154,7 +158,7 @@ class Chinaums {
     params = Object.assign({}, this.baseOptions, options, params);
     const signstr = `${Chinaums.objKeySort(params)}${this.config.key}`;
     params.sign = Chinaums.md5Sign(signstr);
-    const result = await Chinaums.sendRequest(this.APIURL.commonUrl, params);
+    const result = await this.sendRequest(this.APIURL.commonUrl, params);
     return result;
   }
 }

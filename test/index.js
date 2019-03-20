@@ -8,21 +8,21 @@ const assert = require('assert');
 
 // mocha测试用例
 describe('订单相关', () => {
-  it('创建订单', async () => {
-    const res = chinaums.createOrderUrl({
-      tid: '88880001',
-      totalAmount: 1,
-      msgSrc: 'WWW.TEST.COM',
-      merOrderId: `3194${moment().format('YYYYMMDDHHmmss')}`,
-      notifyUrl: 'http://chinaums.frpgz1.idcfengye.com/',
-    });
-    console.log(res);
-    assert.ok(res.indexOf('pay.do'));
-  });
+  // it('创建订单', async () => {
+  //   const res = chinaums.createOrderUrl({
+  //     tid: '88880001',
+  //     totalAmount: 1,
+  //     msgSrc: 'WWW.TEST.COM',
+  //     merOrderId: `3194${moment().format('YYYYMMDDHHmmss')}`,
+  //     notifyUrl: 'http://chinaums.frpgz1.idcfengye.com/',
+  //   });
+  //   console.log(res);
+  //   assert.ok(res.indexOf('pay.do'));
+  // });
 
   it('查询订单', async () => {
     const res = await chinaums.queryOrder({
-      merOrderId: '319420190319152115',
+      merOrderId: '319420190320105432',
       tid: '88880001',
       msgSrc: 'WWW.TEST.COM',
     });
