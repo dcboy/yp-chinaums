@@ -1,0 +1,97 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 2,
+    "pending": 0,
+    "failures": 0,
+    "start": "2019-03-20T02:54:32.550Z",
+    "end": "2019-03-20T02:54:33.737Z",
+    "duration": 1187,
+    "testsRegistered": 2,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "passPercentClass": "success",
+    "pendingPercentClass": "danger"
+  },
+  "suites": {
+    "uuid": "c24569dd-0cb1-4aa4-a9dc-120f0c2f1762",
+    "title": "",
+    "fullFile": "",
+    "file": "",
+    "beforeHooks": [],
+    "afterHooks": [],
+    "tests": [],
+    "suites": [
+      {
+        "uuid": "6d9900e8-774d-427c-b280-0e90bcce65fe",
+        "title": "订单相关",
+        "fullFile": "/Users/mac/Desktop/yp-chinaums/test/index.js",
+        "file": "/test/index.js",
+        "beforeHooks": [],
+        "afterHooks": [],
+        "tests": [
+          {
+            "title": "创建订单",
+            "fullTitle": "订单相关 创建订单",
+            "timedOut": false,
+            "duration": 34,
+            "state": "passed",
+            "speed": "fast",
+            "pass": true,
+            "fail": false,
+            "pending": false,
+            "code": "const res = chinaums.createOrderUrl({\n  tid: '88880001',\n  totalAmount: 1,\n  msgSrc: 'WWW.TEST.COM',\n  merOrderId: `3194${moment().format('YYYYMMDDHHmmss')}`,\n  notifyUrl: 'http://chinaums.frpgz1.idcfengye.com/'\n});\nconsole.log(res);\nassert.ok(res.indexOf('pay.do'));",
+            "err": {},
+            "isRoot": false,
+            "uuid": "cc134dba-aa63-4db8-9344-4023e5255c81",
+            "isHook": false,
+            "skipped": false
+          },
+          {
+            "title": "查询订单",
+            "fullTitle": "订单相关 查询订单",
+            "timedOut": false,
+            "duration": 879,
+            "state": "passed",
+            "speed": "slow",
+            "pass": true,
+            "fail": false,
+            "pending": false,
+            "code": "const res = await chinaums.queryOrder({\n  merOrderId: '319420190319152115',\n  tid: '88880001',\n  msgSrc: 'WWW.TEST.COM'\n});\nconsole.log(res);\nassert.ok(res);",
+            "err": {},
+            "isRoot": false,
+            "uuid": "48cafa27-2391-4fc8-8070-3b6e003bbf9a",
+            "isHook": false,
+            "skipped": false
+          }
+        ],
+        "suites": [],
+        "passes": [
+          "cc134dba-aa63-4db8-9344-4023e5255c81",
+          "48cafa27-2391-4fc8-8070-3b6e003bbf9a"
+        ],
+        "failures": [],
+        "pending": [],
+        "skipped": [],
+        "duration": 913,
+        "root": false,
+        "rootEmpty": false,
+        "_timeout": 2000
+      }
+    ],
+    "passes": [],
+    "failures": [],
+    "pending": [],
+    "skipped": [],
+    "duration": 0,
+    "root": true,
+    "rootEmpty": true,
+    "_timeout": 2000
+  },
+  "copyrightYear": 2019
+}
