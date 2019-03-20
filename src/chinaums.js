@@ -64,10 +64,9 @@ class Chinaums {
 	 * @param {Object} params
 	 * @return {*} options
 	 */
-  async sendRequest (url, params) {
+  async sendRequest(url, params) {
     const result = await axios.post(url, params);
     try {
-      console.log(result.data);
       if (result && result.data && this.verifyNotify(result.data)) {
         return result.data;
       }
@@ -87,7 +86,7 @@ class Chinaums {
 	 * @param {string} params.tid - 终端号
 	 * @return Url
 	 */
-  createOrderUrl (params) {
+  createOrderUrl(params) {
     const options = {
       msgType: 'WXPay.jsPay', // 消息类型 WXPay.jsPay :微信公众号支付 trade.jsPay :支付宝 qmf.jspay :全民付 qmf.webPay :无卡 acp.jsPay :银联云闪付
       instMid: 'YUEDANDEFAULT', // 业务类型
@@ -108,7 +107,7 @@ class Chinaums {
 	 * @param {string} params.tid - 终端号
 	 * @return {Promise<object>} 查询的用户数据
 	 */
-  async queryOrder (params) {
+  async queryOrder(params) {
     const options = {
       msgType: 'query',
       instMid: 'YUEDANDEFAULT', // 业务类型
@@ -129,7 +128,7 @@ class Chinaums {
 	 * @param {string} params.refundAmount - 要退货的金额
 	 * @return {Promise<object>} 订单退款回调结果
 	 */
-  async refunds (params) {
+  async refunds(params) {
     const options = {
       msgType: 'refund', // 消息类型
       instMid: 'YUEDANDEFAULT', // 业务类型
@@ -148,7 +147,7 @@ class Chinaums {
 	 * @param {string} params.merOrderId - 商户订单号
 	 * @param {string} params.tid - 终端号
 	 */
-  async closeOrder (params) {
+  async closeOrder(params) {
     const options = {
       msgType: 'close', // 消息类型
       instMid: 'YUEDANDEFAULT', // 业务类型
