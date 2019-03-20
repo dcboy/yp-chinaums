@@ -1,6 +1,9 @@
 {
   "parser": "babel-eslint",
   "extends": "airbnb-base",
+  "env": {
+    "mocha": true
+  },
   "rules": {
     "no-tabs": 0,
     "no-param-reassign": 0,
