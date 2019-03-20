@@ -1,1 +1,1 @@
-module.exports = require('./lib/chinaumspay');
+module.exports = require('./lib/chinaums');
