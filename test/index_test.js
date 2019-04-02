@@ -6,15 +6,19 @@ const confifg = require('../config/');
 const chinaums = new Chinaums(confifg);
 const assert = require('assert');
 
+const mid = '898340149000005';
+
 // mocha测试用例
 describe('订单相关', () => {
   it('创建订单', async () => {
     const res = chinaums.createOrderUrl({
+      mid,
       tid: '88880001',
       totalAmount: 1,
       msgSrc: 'WWW.TEST.COM',
       merOrderId: `3194${moment().format('YYYYMMDDHHmmss')}`,
-      notifyUrl: 'http://chinaums.frpgz1.idcfengye.com/',
+      notifyUrl: 'http://2fef574a.ngrok.yopoint.cc:81/',
+      msgType: 'WXPay.jsPay',
     });
     console.log(res);
     assert.ok(res.indexOf('pay.do'));
@@ -22,7 +26,8 @@ describe('订单相关', () => {
 
   it('查询订单', async () => {
     const res = await chinaums.queryOrder({
-      merOrderId: '319420190320115709',
+      mid,
+      merOrderId: '319420190326213641',
       tid: '88880001',
       msgSrc: 'WWW.TEST.COM',
     });
@@ -32,8 +37,9 @@ describe('订单相关', () => {
 
   it.skip('订单退款', async () => {
     const res = await chinaums.refunds({
-      merOrderId: '319420190319135454',
+      mid,
       tid: '88880001',
+      merOrderId: '319420190319135454',
       refundAmount: 1,
       msgSrc: 'WWW.TEST.COM',
     });
@@ -43,9 +49,10 @@ describe('订单相关', () => {
 
   it.skip('关闭订单', async () => {
     const res = await chinaums.closeOrder({
+      mid,
+      tid: '88880001',
       msgSrc: 'WWW.TEST.COM',
       merOrderId: '319420190318105008',
-      tid: '88880001',
     });
     console.log(res);
     assert.ok(res.errCode === 'SUCCESS');
